@@ -1,0 +1,292 @@
+#include <stdio.h>
+
+// Function to swap two elements
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// To heapify a subtree rooted with node i (indexing from 0)
+void heapify(int arr[], int n, int i) {
+    int largest = i;          // Initialize largest as root
+    int left = 2 * i + 1;     // left child = 2*i + 1
+    int right = 2 * i + 2;    // right child = 2*i + 2
+
+    // If left child is larger than root
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    // If right child is larger than largest so far
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    // If largest is not root
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+
+        // Recursively heapify the affected sub-tree
+        heapify(arr, n, largest);
+    }
+}
+
+// Main function to perform heap sort
+void heapSort(int arr[], int n) {
+    // Build max heap
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    // Extract elements one by one from the heap
+    for (int i = n - 1; i > 0; i--) {
+        // Move current root to end
+        swap(&arr[0], &arr[i]);
+
+        // call max heapify on the reduced heap
+        heapify(arr, i, 0);
+    }
+}
+
+// Function to print the array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; ++i)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+// Driver code
+int main() {
+    int arr[50], n;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter %d elements: ", n);
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    heapSort(arr, n);
+
+    printf("Sorted array is: ");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+
+
+
+#include <stdio.h>
+
+#define MAX 50
+
+int heap[MAX];
+int size = 0;  // Number of elements in heap
+
+// Function to swap two elements
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Function to insert an element into the heap
+void insert(int value) {
+    if (size == MAX) {
+        printf("Heap is full! Cannot insert more elements.\n");
+        return;
+    }
+
+    size++;
+    int i = size - 1;
+    heap[i] = value;
+
+    // Fix the max heap property if violated
+    while (i != 0 && heap[(i - 1) / 2] < heap[i]) {
+        swap(&heap[i], &heap[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+
+    printf("%d inserted successfully.\n", value);
+}
+
+// Function to heapify a subtree with root i
+void heapify(int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < size && heap[left] > heap[largest])
+        largest = left;
+
+    if (right < size && heap[right] > heap[largest])
+        largest = right;
+
+    if (largest != i) {
+        swap(&heap[i], &heap[largest]);
+        heapify(largest);
+    }
+}
+
+// Function to delete the root (maximum) element
+void deleteRoot() {
+    if (size <= 0) {
+        printf("Heap is empty! No element to delete.\n");
+        return;
+    }
+
+    int root = heap[0];
+    heap[0] = heap[size - 1];
+    size--;
+
+    heapify(0);
+
+    printf("Deleted root element: %d\n", root);
+}
+
+// Function to print the heap
+void printHeap() {
+    if (size == 0) {
+        printf("Heap is empty.\n");
+        return;
+    }
+
+    printf("Heap elements: ");
+    for (int i = 0; i < size; i++)
+        printf("%d ", heap[i]);
+    printf("\n");
+}
+
+// Main function
+int main() {
+    int choice, value;
+
+    while (1) {
+        printf("\n------ Max Heap Operations ------\n");
+        printf("1. Insert\n");
+        printf("2. Delete Root\n");
+        printf("3. Display Heap\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("Enter value to insert: ");
+            scanf("%d", &value);
+            insert(value);
+            break;
+
+        case 2:
+            deleteRoot();
+            break;
+
+        case 3:
+            printHeap();
+            break;
+
+        case 4:
+            return 0;
+
+        default:
+            printf("Invalid choice! Try again.\n");
+        }
+    }
+}
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define structure for a node in the binary tree
+struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to create a binary tree (recursive)
+struct Node* createTree() {
+    int data;
+    printf("Enter data (-1 for no node): ");
+    scanf("%d", &data);
+
+    // Base condition for recursion
+    if (data == -1)
+        return NULL;
+
+    // Create a new node
+    struct Node* newNode = createNode(data);
+
+    printf("Enter left child of %d\n", data);
+    newNode->left = createTree();
+
+    printf("Enter right child of %d\n", data);
+    newNode->right = createTree();
+
+    return newNode;
+}
+
+// Inorder traversal (Left, Root, Right)
+void inorder(struct Node* root) {
+    if (root == NULL)
+        return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+
+// Preorder traversal (Root, Left, Right)
+void preorder(struct Node* root) {
+    if (root == NULL)
+        return;
+    printf("%d ", root->data);
+    preorder(root->left);
+    preorder(root->right);
+}
+
+// Postorder traversal (Left, Right, Root)
+void postorder(struct Node* root) {
+    if (root == NULL)
+        return;
+    postorder(root->left);
+    postorder(root->right);
+    printf("%d ", root->data);
+}
+
+// Main function
+int main() {
+    struct Node* root = NULL;
+
+    printf("Create the binary tree:\n");
+    root = createTree();
+
+    printf("\nInorder Traversal: ");
+    inorder(root);
+
+    printf("\nPreorder Traversal: ");
+    preorder(root);
+
+    printf("\nPostorder Traversal: ");
+    postorder(root);
+
+    printf("\n");
+
+    return 0;
+}
+
+
+
+
+
+
+
